@@ -1,21 +1,44 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { colors, hp, wp } from '../../helper';
 
-const Button = () => {
+interface props {
+  container?: ViewStyle;
+  type?: 'primary' | 'secondary';
+}
+
+const Button = ({ container, type }: props) => {
+  const isPrimary = type !== 'secondary';
   return (
-    <View style={styles.container}>
-      <Text>Button</Text>
-    </View>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        isPrimary ? styles.primaryContainer : styles.secondaryContainer,
+        container,
+      ]}
+    >
+      <Text style={[isPrimary ? styles.primaryText : styles.secondaryText]}>
+        Button
+      </Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2c3e50',
+    paddingVertical: hp(14),
+    paddingHorizontal: wp(14),
   },
+  primaryContainer: {
+    backgroundColor: colors.primary,
+  },
+  secondaryContainer: {
+    backgroundColor: colors.secondary,
+  },
+  primaryText: {},
+  secondaryText: {},
 });
 
 export default Button;
