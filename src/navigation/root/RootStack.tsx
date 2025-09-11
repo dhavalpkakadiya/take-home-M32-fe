@@ -5,14 +5,15 @@ import {
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { Landing, Login, SignUp } from '../../modules';
+import { ChatBot,Landing, Login, SignUp } from '../../modules';
 
 const Navigation = createNativeStackNavigator({
-  initialRouteName: 'Landing',
+  initialRouteName: 'ChatBot',
   screenOptions: {
     headerShown: false,
   },
   screens: {
+    ChatBot: ChatBot,
     Landing: Landing,
     Login: Login,
     SignUp: SignUp,
