@@ -1,5 +1,6 @@
 import { colors } from './theme/colors';
 import { icons } from './constants/icons';
+import { commonStyles } from './theme/styles';
 import { hp, fs, wp, SCREEN_HEIGHT, SCREEN_WIDTH } from './theme/layoutUtils';
 
-export { colors, icons, SCREEN_HEIGHT, SCREEN_WIDTH, hp, wp, fs };
+export { colors, icons, SCREEN_HEIGHT, SCREEN_WIDTH, commonStyles, hp, wp, fs };

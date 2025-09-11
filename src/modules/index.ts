@@ -3,6 +3,7 @@ import Landing from './landing/Landing';
 
 // auth screens
 import Login from './auth/Login';
+import SignUp from './auth/SignUp';
 
 export {
   // landing screens
@@ -10,4 +11,5 @@ export {
 
   // auth screens
   Login,
+  SignUp,
 };

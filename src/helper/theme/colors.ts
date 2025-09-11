@@ -4,6 +4,8 @@ const lightThemeColors = {
   textPrimary: '#1b0e0e',
   textSecondary: '#fcf8f8',
   background: '#fcf8f8',
+  border: '#6B7280',
+  black: '#000000',
 };
 
 export const colors = lightThemeColors;

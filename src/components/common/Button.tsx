@@ -1,24 +1,38 @@
 import React from 'react';
-import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { colors, hp, wp } from '../../helper';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-interface props {
-  container?: ViewStyle;
-  type?: 'primary' | 'secondary';
-}
+import { ButtonProps } from '../../declarations';
+import { colors, commonStyles, fs, hp, wp } from '../../helper';
 
-const Button = ({ container, type }: props) => {
+const Button = ({
+  type,
+  text,
+  container,
+  allowMargin,
+  allowHMargin,
+  allowVMargin,
+  onPress,
+}: ButtonProps) => {
   const isPrimary = type !== 'secondary';
   return (
     <TouchableOpacity
       style={[
         styles.container,
         isPrimary ? styles.primaryContainer : styles.secondaryContainer,
+        allowMargin && commonStyles.allowMargin,
+        allowHMargin && commonStyles.allowHMargin,
+        allowVMargin && commonStyles.allowVMargin,
         container,
       ]}
+      onPress={onPress}
     >
-      <Text style={[isPrimary ? styles.primaryText : styles.secondaryText]}>
-        Button
+      <Text
+        style={[
+          styles.text,
+          isPrimary ? styles.primaryText : styles.secondaryText,
+        ]}
+      >
+        {text}
       </Text>
     </TouchableOpacity>
   );
@@ -28,8 +42,9 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: hp(14),
-    paddingHorizontal: wp(14),
+    paddingVertical: hp(12),
+    paddingHorizontal: wp(12),
+    borderRadius: wp(12),
   },
   primaryContainer: {
     backgroundColor: colors.primary,
@@ -37,8 +52,16 @@ const styles = StyleSheet.create({
   secondaryContainer: {
     backgroundColor: colors.secondary,
   },
-  primaryText: {},
-  secondaryText: {},
+  text: {
+    fontSize: fs(16),
+    fontWeight: '600',
+  },
+  primaryText: {
+    color: colors.secondary,
+  },
+  secondaryText: {
+    color: colors.primary,
+  },
 });
 
 export default Button;
