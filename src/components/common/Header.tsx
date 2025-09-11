@@ -8,21 +8,40 @@ const Header = ({
   title,
   leftIcon,
   container,
+  rightIcon,
   titleStyle,
   allowHMargin,
   onLeftPress,
+  onRightPress,
 }: HeaderProps) => {
   return (
     <View
       style={[styles.container, allowHMargin && styles.allowHMargin, container]}
     >
-      <TouchableOpacity style={styles.leftContainer} onPress={onLeftPress}>
-        <Image source={leftIcon ?? icons.chevronLeft} style={styles.backIcon} />
-      </TouchableOpacity>
+      {onLeftPress && (
+        <TouchableOpacity
+          style={[styles.iconContainer, styles.leftContainer]}
+          onPress={onLeftPress}
+        >
+          <Image
+            source={leftIcon ?? icons.chevronLeft}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+      )}
 
       <Text style={[styles.title, titleStyle]} numberOfLines={1}>
         {title}
       </Text>
+
+      {onRightPress && (
+        <TouchableOpacity
+          style={[styles.iconContainer, styles.rightContainer]}
+          onPress={onRightPress}
+        >
+          <Image source={rightIcon} style={styles.backIcon} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -47,12 +66,17 @@ const styles = StyleSheet.create({
     height: wp(26),
     resizeMode: 'contain',
   },
-  leftContainer: {
+  iconContainer: {
     position: 'absolute',
-    left: wp(16),
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
+  },
+  leftContainer: {
+    left: wp(16),
+  },
+  rightContainer: {
+    right: wp(16),
   },
 });
 

@@ -4,34 +4,21 @@ import {
   ScrollView,
   StyleSheet,
   KeyboardEvent,
+  Alert,
 } from 'react-native';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-import { wp, hp } from '../../utils/globalFunctions';
 import {
-  Header,
-  MessageItem,
-  MessageData,
-  ChatInputField,
-} from '../../components/chatbot';
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import { getAuth, signOut } from '@react-native-firebase/auth';
 
-type RootStackParamList = {
-  ChatBot: undefined;
-  Home: undefined;
-};
+import { Header } from '../../components';
+import { MessageData } from '../../declarations';
+import { colors, hp, icons, wp } from '../../helper';
+import { MessageItem, ChatInputField } from '../../components/chatbot';
 
-type ChatBotNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'ChatBot'
->;
-
-interface ChatBotProps {
-  navigation?: ChatBotNavigationProp;
-}
-
-const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
+const ChatBot = () => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<MessageData[]>([
     {
@@ -50,6 +37,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
   const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  const { bottom } = useSafeAreaInsets();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -120,24 +109,31 @@ const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
     }
   };
 
-  const handleBackPress = (): void => {
-    if (navigation) {
-      navigation.goBack();
-    } else {
-      console.log('Back pressed - no navigation provided');
-    }
-  };
-
   const handleMessageChange = (text: string): void => {
     setMessage(text);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(getAuth());
+    } catch (error) {
+      Alert.alert('Logout', 'There is some issue while logging you out!');
+    }
+  };
+
+  const onLogoutPress = () => {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Yes', onPress: handleLogout },
+      { text: 'No' },
+    ]);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Header
-        showBackButton={true}
-        title="Business AI Assistant"
-        onBackPress={handleBackPress}
+        title={'Business AI Assistant'}
+        onRightPress={onLogoutPress}
+        rightIcon={icons.logout}
       />
 
       <ScrollView
@@ -151,8 +147,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
           <MessageItem
             key={msg.id}
             type={msg.type}
-            showLabel={true}
             message={msg.text}
+            name={''}
           />
         ))}
 
@@ -160,7 +156,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
           <MessageItem
             type="ai"
             key="typing"
-            showLabel={false}
             message="AI is typing..."
             containerStyle={styles.typingIndicator}
           />
@@ -174,6 +169,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
         placeholder="Type your message..."
         keyboardHeight={keyboardHeight}
         onChangeText={handleMessageChange}
+        containerStyle={{ paddingBottom: hp(bottom) }}
       />
     </SafeAreaView>
   );
@@ -182,15 +178,15 @@ const ChatBot: React.FC<ChatBotProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
   chatContainer: {
     flex: 1,
   },
   chatContentContainer: {
-    paddingHorizontal: wp(4),
-    paddingTop: hp(2),
-    paddingBottom: hp(2),
+    paddingHorizontal: wp(15),
+    paddingTop: hp(16.24),
+    paddingBottom: hp(16.24),
   },
   typingIndicator: {
     opacity: 0.7,

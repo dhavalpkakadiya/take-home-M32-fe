@@ -1,27 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { Avatar } from './Avatar';
 import { MessageBubble } from './MessageBubble';
-import { MessageItemProps } from '../../types/common';
-import { wp, hp, fontSize } from '../../utils/globalFunctions';
+import { wp, hp } from '../../helper';
+import { MessageItemProps } from '../../declarations';
 
-export const MessageItem: React.FC<MessageItemProps> = ({
+export const MessageItem = ({
   message,
+  name,
   type = 'ai',
   containerStyle,
-  showLabel = true,
-}) => {
+}: MessageItemProps) => {
   const isAI: boolean = type === 'ai';
 
   return (
     <View style={[styles.messageContainer, containerStyle]}>
       <View style={[styles.messageRow, isAI ? styles.aiRow : styles.userRow]}>
-        {isAI && <Avatar type="ai" style={{ marginRight: wp(3) }} />}
+        {isAI && <Avatar type="ai" style={{ marginRight: wp(11.25) }} />}
 
         <MessageBubble message={message} type={type} />
 
-        {!isAI && <Avatar type="user" style={{ marginLeft: wp(3) }} />}
+        {!isAI && (
+          <Avatar name={name} type="user" style={{ marginLeft: wp(11.25) }} />
+        )}
       </View>
     </View>
   );
@@ -29,12 +31,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
 const styles = StyleSheet.create({
   messageContainer: {
-    marginBottom: hp(2.5),
-  },
-  label: {
-    fontSize: fontSize(14),
-    color: '#666',
-    fontWeight: '500',
+    marginBottom: hp(20.3),
   },
   messageRow: {
     flexDirection: 'row',

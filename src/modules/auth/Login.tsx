@@ -7,36 +7,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackActions, useNavigation } from '@react-navigation/native';
 
+import { useAuth } from '../../hooks';
 import { strings } from '../../helper/constants/strings';
 import { colors, commonStyles, hp } from '../../helper';
 import { Button, Header, TextInput } from '../../components';
 
 const Login = () => {
-  const navigation = useNavigation();
-
-  const onSignupPress = () => {
-    navigation.dispatch(StackActions.replace('SignUp'));
-  };
-
-  const formik = useFormik({
-    initialValues: { email: '', password: '' },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email(strings.invalid_email)
-        .required(strings.email_required),
-      password: Yup.string()
-        .min(6, strings.password_min)
-        .required(strings.password_required),
-    }),
-    onSubmit: _values => {
-      // TODO: integrate with auth when ready
-    },
-  });
+  const { loginFormikValidation: formik, onSignupPress, goBack } = useAuth();
 
   return (
     <SafeAreaView style={commonStyles.container}>
@@ -45,10 +24,11 @@ const Login = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={commonStyles.flexGrow}
       >
-        <Header title={strings.login} onLeftPress={navigation.goBack} />
+        <Header title={strings.login} onLeftPress={goBack} />
         <View style={commonStyles.flex}>
           <TextInput
             allowMargin
+            autoCapitalize="none"
             title={strings.email}
             value={formik.values.email}
             placeholder={strings.enter_email}
@@ -70,6 +50,7 @@ const Login = () => {
             }
             onBlur={formik.handleBlur('password')}
             onChangeText={formik.handleChange('password')}
+            onSubmitEditing={formik.handleSubmit}
           />
 
           <Button

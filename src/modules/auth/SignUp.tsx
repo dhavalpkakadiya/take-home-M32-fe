@@ -7,39 +7,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackActions, useNavigation } from '@react-navigation/native';
 
+import { useAuth } from '../../hooks';
 import { colors, commonStyles, hp } from '../../helper';
 import { strings } from '../../helper/constants/strings';
 import { Button, Header, TextInput } from '../../components';
 
 const SignUp = () => {
-  const navigation = useNavigation();
-
-  const onSigninPress = () => {
-    navigation.dispatch(StackActions.replace('Login'));
-  };
-
-  const formik = useFormik({
-    initialValues: { name: '', email: '', password: '' },
-    validationSchema: Yup.object({
-      name: Yup.string()
-        .min(5, strings.name_min)
-        .required(strings.name_required),
-      email: Yup.string()
-        .email(strings.invalid_email)
-        .required(strings.email_required),
-      password: Yup.string()
-        .min(6, strings.password_min)
-        .required(strings.password_required),
-    }),
-    onSubmit: value => {
-      console.log('value', value);
-    },
-  });
+  const { signUpFormikValidation: formik, onSigninPress, goBack } = useAuth();
 
   return (
     <SafeAreaView style={commonStyles.container}>
@@ -48,10 +24,7 @@ const SignUp = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={commonStyles.flexGrow}
       >
-        <Header
-          title={strings.create_account}
-          onLeftPress={navigation.goBack}
-        />
+        <Header title={strings.create_account} onLeftPress={goBack} />
         <View style={commonStyles.flex}>
           <TextInput
             allowMargin
@@ -64,6 +37,7 @@ const SignUp = () => {
           />
           <TextInput
             allowMargin
+            autoCapitalize="none"
             title={strings.email}
             value={formik.values.email}
             placeholder={strings.enter_email}
@@ -85,6 +59,7 @@ const SignUp = () => {
             }
             onBlur={formik.handleBlur('password')}
             onChangeText={formik.handleChange('password')}
+            onSubmitEditing={formik.handleSubmit}
           />
           <Button
             allowHMargin

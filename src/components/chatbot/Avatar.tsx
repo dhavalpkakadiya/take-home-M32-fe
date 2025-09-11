@@ -1,20 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
-import { AvatarProps } from '../../types/common';
-import { wp, fontSize } from '../../utils/globalFunctions';
+import { wp, fs, colors } from '../../helper';
+import { AvatarProps } from '../../declarations';
 
-export const Avatar: React.FC<AvatarProps> = ({
+export const Avatar = ({
   text,
+  name,
   style,
   imageUri,
   type = 'ai',
-  size = wp(10),
+  size = wp(37.5),
   backgroundColor,
-  textColor = '#fff',
-}) => {
+}: AvatarProps) => {
   const defaultBgColor: string = type === 'ai' ? '#2c5530' : '#8B4513';
-  const defaultText: string = type === 'ai' ? 'AI' : 'U';
+  const defaultText: string = type === 'ai' ? 'AI' : name || 'U';
 
   return (
     <View
@@ -35,9 +35,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           style={[styles.avatarImage, { borderRadius: size / 2 }]}
         />
       ) : (
-        <Text style={[styles.avatarText, { color: textColor }]}>
-          {text || defaultText}
-        </Text>
+        <Text style={styles.avatarText}>{text || defaultText}</Text>
       )}
     </View>
   );
@@ -53,7 +51,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   avatarText: {
-    fontSize: fontSize(14),
+    fontSize: fs(14),
     fontWeight: '600',
+    color: colors.white,
   },
 });

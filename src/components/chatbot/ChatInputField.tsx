@@ -1,16 +1,16 @@
 import React from 'react';
 import {
   View,
-  Text,
+  Image,
   TextInput,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 
-import { ChatInputFieldProps } from '../../types/common';
-import { wp, hp, fontSize, isAndroid } from '../../utils/globalFunctions';
+import { wp, hp, fs, icons, colors } from '../../helper';
+import { ChatInputFieldProps } from '../../declarations';
 
-export const ChatInputField: React.FC<ChatInputFieldProps> = ({
+export const ChatInputField = ({
   value,
   onSend,
   inputStyle,
@@ -19,7 +19,7 @@ export const ChatInputField: React.FC<ChatInputFieldProps> = ({
   maxLength = 500,
   sendButtonStyle,
   placeholder = 'Type your message...',
-}) => (
+}: ChatInputFieldProps) => (
   <View style={[styles.inputContainer, containerStyle]}>
     <View style={styles.inputWrapper}>
       <TextInput
@@ -44,7 +44,7 @@ export const ChatInputField: React.FC<ChatInputFieldProps> = ({
         activeOpacity={0.8}
         disabled={!value.trim()}
       >
-        <Text style={styles.sendButtonText}>→</Text>
+        <Image style={styles.sendIcon} source={icons.send} />
       </TouchableOpacity>
     </View>
   </View>
@@ -52,12 +52,11 @@ export const ChatInputField: React.FC<ChatInputFieldProps> = ({
 
 const styles = StyleSheet.create({
   inputContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    paddingHorizontal: wp(4),
-    paddingTop: hp(1.5),
-    paddingBottom: isAndroid ? hp(1.5) : hp(3),
+    paddingHorizontal: wp(15),
+    paddingTop: hp(12.18),
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -67,31 +66,30 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    borderRadius: wp(6),
-    paddingHorizontal: wp(4),
-    paddingVertical: hp(1.5),
-    fontSize: fontSize(16),
-    maxHeight: hp(12),
-    backgroundColor: '#f9f9f9',
+    borderRadius: wp(22.5),
+    paddingHorizontal: wp(15),
+    paddingVertical: hp(12.18),
+    fontSize: fs(16),
+    maxHeight: hp(97.44),
     textAlignVertical: 'top',
   },
   sendButton: {
-    width: wp(11),
-    height: wp(11),
-    borderRadius: wp(5.5),
-    backgroundColor: '#dc3545',
+    borderRadius: wp(20.625),
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: wp(3),
+    marginLeft: wp(11.25),
     elevation: 2,
-    shadowColor: '#dc3545',
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
+    padding: wp(10),
   },
-  sendButtonText: {
-    color: '#fff',
-    fontSize: fontSize(18),
-    fontWeight: '600',
+  sendIcon: {
+    width: wp(20),
+    height: wp(20),
+    resizeMode: 'contain',
+    tintColor: colors.white,
   },
 });

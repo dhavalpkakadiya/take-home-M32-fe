@@ -22,4 +22,9 @@ export const commonStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  flexCenterContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

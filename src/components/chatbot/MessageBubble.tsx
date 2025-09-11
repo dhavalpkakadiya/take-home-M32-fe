@@ -1,16 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import { MessageBubbleProps } from '../../types/common';
-import { wp, hp, fontSize } from '../../utils/globalFunctions';
+import { wp, hp, fs, colors } from '../../helper';
+import { MessageBubbleProps } from '../../declarations';
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({
+export const MessageBubble = ({
   message,
   textStyle,
   type = 'ai',
   bubbleStyle,
-  maxWidth = wp(75),
-}) => {
+}: MessageBubbleProps) => {
   const isAI: boolean = type === 'ai';
 
   return (
@@ -18,10 +17,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       style={[
         styles.messageBubble,
         {
-          maxWidth,
-          backgroundColor: isAI ? '#e8f4f8' : '#dc3545',
-          borderBottomLeftRadius: isAI ? wp(1) : wp(4.5),
-          borderBottomRightRadius: isAI ? wp(4.5) : wp(1),
+          backgroundColor: !isAI ? colors.secondary : colors.primary,
+          borderBottomLeftRadius: isAI ? wp(3.75) : wp(16.875),
+          borderBottomRightRadius: isAI ? wp(16.875) : wp(3.75),
         },
         bubbleStyle,
       ]}
@@ -29,7 +27,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       <Text
         style={[
           styles.messageText,
-          { color: isAI ? '#333' : '#fff' },
+          { color: !isAI ? colors.textPrimary : colors.white },
           textStyle,
         ]}
       >
@@ -41,12 +39,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
 const styles = StyleSheet.create({
   messageBubble: {
-    paddingHorizontal: wp(4),
-    paddingVertical: hp(1.5),
-    borderRadius: wp(4.5),
+    paddingHorizontal: wp(15),
+    paddingVertical: hp(12.18),
+    borderRadius: wp(16.875),
+    maxWidth: '80%',
   },
   messageText: {
-    fontSize: fontSize(16),
-    lineHeight: fontSize(22),
+    fontSize: fs(16),
+    lineHeight: fs(22),
   },
 });
