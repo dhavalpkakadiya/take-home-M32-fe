@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { wp, hp, fs, icons, colors } from '../../helper';
+import { wp, hp, fs, icons, colors, strings } from '../../helper';
 import { ChatInputFieldProps } from '../../declarations';
 
 export const ChatInputField = ({
@@ -15,10 +15,11 @@ export const ChatInputField = ({
   onSend,
   inputStyle,
   onChangeText,
+  onFocus,
   containerStyle,
   maxLength = 500,
   sendButtonStyle,
-  placeholder = 'Type your message...',
+  placeholder = strings.chat_input_placeholder,
 }: ChatInputFieldProps) => (
   <View style={[styles.inputContainer, containerStyle]}>
     <View style={styles.inputWrapper}>
@@ -31,7 +32,8 @@ export const ChatInputField = ({
         onSubmitEditing={onSend}
         placeholder={placeholder}
         onChangeText={onChangeText}
-        placeholderTextColor="#999"
+        onFocus={onFocus}
+        placeholderTextColor={colors.border}
         style={[styles.textInput, inputStyle]}
       />
       <TouchableOpacity
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: colors.borderLight,
     paddingHorizontal: wp(15),
   },
   inputWrapper: {
@@ -65,13 +67,14 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: colors.borderLight,
     borderRadius: wp(22.5),
     paddingHorizontal: wp(15),
     paddingVertical: hp(12.18),
     fontSize: fs(16),
     maxHeight: hp(97.44),
     textAlignVertical: 'top',
+    color: colors.textPrimary,
   },
   sendButton: {
     borderRadius: wp(20.625),

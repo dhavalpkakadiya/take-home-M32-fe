@@ -12,7 +12,6 @@ export const axiosClient: AxiosInstance = axios.create({
 });
 
 axiosClient.interceptors.request.use(async config => {
-  console.log('config', config);
   return config;
 });
 

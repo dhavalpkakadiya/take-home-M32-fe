@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 import { MessageBubble } from './MessageBubble';
 import { hp, fs, colors } from '../../helper';

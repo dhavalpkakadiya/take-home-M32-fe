@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '../../components';
-import { strings } from '../../helper/constants/strings';
-import { colors, commonStyles, fs, hp, icons, wp } from '../../helper';
+import { colors, commonStyles, fs, hp, icons, wp, strings } from '../../helper';
 
 const Landing = () => {
   const navigation = useNavigation();

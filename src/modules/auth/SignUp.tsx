@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  View,
   Text,
+  View,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -10,15 +10,20 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '../../hooks';
-import { colors, commonStyles, hp } from '../../helper';
-import { strings } from '../../helper/constants/strings';
-import { Button, Header, TextInput } from '../../components';
+import { colors, commonStyles, hp, strings } from '../../helper';
+import { Button, Header, TextInput, Loader } from '../../components';
 
 const SignUp = () => {
-  const { signUpFormikValidation: formik, onSigninPress, goBack } = useAuth();
+  const {
+    isLoading,
+    signUpFormikValidation: formik,
+    goBack,
+    onSigninPress,
+  } = useAuth();
 
   return (
     <SafeAreaView style={commonStyles.container}>
+      <Loader visible={isLoading} />
       <ScrollView
         bounces={false}
         showsVerticalScrollIndicator={false}

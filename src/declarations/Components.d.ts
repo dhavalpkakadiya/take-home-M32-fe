@@ -1,4 +1,5 @@
 import { TextInputProps as RNTextInputProps, StyleProp } from 'react-native';
+import { SessionListItem } from '../firebase/functions';
 import { MessageData } from './Chat';
 
 export interface MarginProps {
@@ -33,11 +34,9 @@ export interface HeaderProps {
   allowHMargin?: boolean;
 }
 
-
 export interface MessageBubbleProps {
   message: MessageData;
   maxWidth?: number;
-  textStyle?: TextStyle;
   bubbleStyle?: ViewStyle;
 }
 
@@ -50,10 +49,26 @@ export interface ChatInputFieldProps {
   containerStyle?: StyleProp<ViewStyle>;
   sendButtonStyle?: StyleProp<ViewStyle>;
   onChangeText: (text: string) => void;
+  onFocus?: () => void;
 }
 
 export interface MessageItemProps {
   name: string;
   message: MessageData;
   containerStyle?: ViewStyle;
+}
+
+export interface LoaderProps {
+  visible: boolean;
+}
+
+export interface SessionsDrawerProps {
+  open: boolean;
+  sessions: SessionListItem[];
+  loading: boolean;
+  userName?: string;
+  currentSessionId?: string;
+  onClose: () => void;
+  onSelectSession: (sessionId: string) => void;
+  onPressLogout?: () => void;
 }

@@ -1,18 +1,18 @@
 import React from 'react';
 import { Alert } from 'react-native';
 
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from '@react-native-firebase/auth';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import { StackActions, useNavigation } from '@react-navigation/native';
 
+import { strings } from '../../helper';
 import { User } from '../../declarations';
 import { createUser } from '../../firebase';
-import { strings } from '../../helper/constants/strings';
 
 type SignInParams = { email: string; password: string };
 type SignUpParams = User & { password: string };
@@ -20,10 +20,12 @@ type AuthResult = { ok: true } | { ok: false; message: string };
 
 export const useAuth = () => {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const signIn = React.useCallback(
     async ({ email, password }: SignInParams): Promise<AuthResult> => {
       try {
+        setIsLoading(true);
         await signInWithEmailAndPassword(getAuth(), email, password);
         return { ok: true };
       } catch (error: any) {
@@ -40,6 +42,8 @@ export const useAuth = () => {
           };
         }
         return { ok: false, message: strings.auth_signin_generic };
+      } finally {
+        setIsLoading(false);
       }
     },
     [],
@@ -48,13 +52,12 @@ export const useAuth = () => {
   const signUp = React.useCallback(
     async (user: SignUpParams): Promise<AuthResult> => {
       try {
+        setIsLoading(true);
         const userData = await createUserWithEmailAndPassword(
           getAuth(),
           user.email,
           user.password,
         );
-        console.log('userData', userData)
-        console.log('userData.user.uid', userData.user.uid);
         await getAuth().signOut();
         await createUser(userData.user.uid, user);
         return { ok: true };
@@ -72,6 +75,8 @@ export const useAuth = () => {
           ok: false,
           message: strings.auth_signup_generic,
         };
+      } finally {
+        setIsLoading(false);
       }
     },
     [],
@@ -132,10 +137,11 @@ export const useAuth = () => {
   }, [navigation]);
 
   return {
+    isLoading,
     loginFormikValidation,
     signUpFormikValidation,
+    goBack,
     onSignupPress,
     onSigninPress,
-    goBack,
   };
 };

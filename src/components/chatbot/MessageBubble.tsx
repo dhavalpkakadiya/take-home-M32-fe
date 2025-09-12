@@ -1,35 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Markdown from 'react-native-markdown-display';
-import { Linking } from 'react-native';
+import { View, Linking, Text, StyleSheet } from 'react-native';
+
 import MarkdownIt from 'markdown-it';
+import Markdown from 'react-native-markdown-display';
 
 import { wp, hp, fs, colors } from '../../helper';
 import { MessageBubbleProps } from '../../declarations';
 
-export const MessageBubble = ({
-  message,
-  textStyle,
-  bubbleStyle,
-}: MessageBubbleProps) => {
+export const MessageBubble = ({ message, bubbleStyle }: MessageBubbleProps) => {
   const isAI: boolean = message.type === 'ai';
   const md = new MarkdownIt({ typographer: true, linkify: true });
 
   const markdownBodyStyle = StyleSheet.flatten([
     styles.messageText,
     { color: colors.white },
-    textStyle,
   ]);
 
   return (
     <View
       style={[
         styles.messageBubble,
-        {
-          backgroundColor: !isAI ? colors.secondary : colors.primary,
-          borderBottomLeftRadius: isAI ? wp(1) : wp(16),
-          borderBottomRightRadius: isAI ? wp(16) : wp(1),
-        },
+        isAI ? styles.bubbleAI : styles.bubbleUser,
         bubbleStyle,
       ]}
     >
@@ -37,7 +28,23 @@ export const MessageBubble = ({
         {isAI ? (
           <Markdown
             markdownit={md}
-            style={{ body: markdownBodyStyle }}
+            style={{
+              body: markdownBodyStyle,
+              code_inline: {
+                backgroundColor: 'transparent',
+                color: colors.white,
+                paddingHorizontal: 0,
+                paddingVertical: 0,
+              },
+              code_block: {
+                backgroundColor: 'transparent',
+                color: colors.white,
+              },
+              fence: {
+                backgroundColor: 'transparent',
+                color: colors.white,
+              },
+            }}
             onLinkPress={(url: string) => {
               Linking.openURL(url);
               return true;
@@ -47,11 +54,7 @@ export const MessageBubble = ({
           </Markdown>
         ) : (
           <Text
-            style={[
-              styles.messageText,
-              textStyle,
-              !isAI && [styles.userTextAlignment],
-            ]}
+            style={[styles.messageText, !isAI && [styles.userTextAlignment]]}
           >
             {message.text}
           </Text>
@@ -64,9 +67,19 @@ export const MessageBubble = ({
 const styles = StyleSheet.create({
   messageBubble: {
     paddingHorizontal: wp(15),
-    paddingVertical: hp(4),
+    paddingVertical: hp(10),
     borderRadius: wp(16),
     maxWidth: '90%',
+  },
+  bubbleAI: {
+    backgroundColor: colors.primary,
+    borderBottomLeftRadius: wp(1),
+    borderBottomRightRadius: wp(16),
+  },
+  bubbleUser: {
+    backgroundColor: colors.secondary,
+    borderBottomLeftRadius: wp(16),
+    borderBottomRightRadius: wp(1),
   },
   messageContent: {
     flex: 1,
@@ -75,7 +88,6 @@ const styles = StyleSheet.create({
     fontSize: fs(14),
     lineHeight: fs(18),
   },
-
   userTextAlignment: {
     alignSelf: 'flex-end',
     color: colors.textPrimary,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { HeaderProps } from '../../declarations';
 import { colors, fs, hp, icons, wp } from '../../helper';
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     marginBottom: hp(10),
+    paddingVertical: hp(5),
   },
   allowHMargin: { marginHorizontal: wp(24) },
   title: {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1,
+    // zIndex: 1,
   },
   leftContainer: {
     left: wp(16),

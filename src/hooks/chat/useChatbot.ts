@@ -1,52 +1,63 @@
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 import { getAuth } from '@react-native-firebase/auth';
 
+import {
+  SessionListItem,
+  getSessionMessages,
+  getSessionsWithLatest,
+} from '../../firebase/functions';
 import { User } from '../../declarations';
-import { generateUniqueId } from '../../helper';
-import { sendChatMessage } from '../../api/chat';
+import { sendChatMessage } from '../../api';
 import { getUser, storeChat } from '../../firebase';
-import { strings } from '../../helper/constants/strings';
+import { generateUniqueId, strings } from '../../helper';
 import { ChatRequest, ChatResponse, MessageData } from '../../declarations';
 
 interface UseChatbotReturn {
+  user?: User | null;
   message: string;
   messages: MessageData[];
   isTyping: boolean;
   handleMessageChange: (text: string) => void;
   sendMessage: () => Promise<void>;
-  resetChat: () => void;
-  user?: User | null;
+  handleStartNewChat: () => void;
+  currentSessionId: string;
+  sessions: SessionListItem[];
+  loadingSessions: boolean;
+  isDrawerOpen: boolean;
+  closeDrawer: () => void;
+  onMenuPress: () => Promise<void>;
+  onSelectSession: (sessionId: string) => Promise<void>;
 }
 
 export function useChatbot(): UseChatbotReturn {
-  const initialMessages: MessageData[] = useMemo(
-    () => [
+  const createInitialMessages = useCallback((): MessageData[] => {
+    return [
       {
         id: generateUniqueId(),
         type: 'ai',
         text: strings.chat_initial_ai_message,
         timestamp: new Date(),
       },
-    ],
-    [],
-  );
+    ];
+  }, []);
 
   const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<MessageData[]>(initialMessages);
+  const [messages, setMessages] = useState<MessageData[]>(
+    createInitialMessages(),
+  );
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [sessionId] = useState<string>(() => generateUniqueId());
+  const [sessionId, setSessionId] = useState<string>(() => generateUniqueId());
+  const [sessions, setSessions] = useState<SessionListItem[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [loadingSessions, setLoadingSessions] = useState(false);
 
   const handleMessageChange = useCallback((text: string) => {
     setMessage(text);
   }, []);
 
-  const resetChat = useCallback(() => {
-    setMessages(initialMessages);
-    setMessage('');
-    setIsTyping(false);
-  }, [initialMessages]);
+  // resetChat was previously exposed but is no longer used
 
   useEffect(() => {
     const uid = getAuth().currentUser?.uid;
@@ -60,6 +71,66 @@ export function useChatbot(): UseChatbotReturn {
       }
     })();
   }, []);
+
+  const selectSession = useCallback(
+    async (newSessionId: string) => {
+      const uid = getAuth().currentUser?.uid;
+      setIsTyping(false);
+      if (!uid || !newSessionId) {
+        setSessionId(generateUniqueId());
+        setMessages(createInitialMessages());
+        return;
+      }
+      try {
+        const existingMessages = await getSessionMessages(uid, newSessionId);
+        if (existingMessages && existingMessages.length > 0) {
+          setMessages(existingMessages);
+        } else {
+          setMessages(createInitialMessages());
+        }
+        setSessionId(newSessionId);
+        setMessage('');
+      } catch (e) {
+        setSessionId(newSessionId);
+        setMessages(createInitialMessages());
+      }
+    },
+    [createInitialMessages],
+  );
+
+  const openDrawer = useCallback(async () => {
+    setIsDrawerOpen(true);
+    setLoadingSessions(true);
+    try {
+      const uid = getAuth().currentUser?.uid;
+      if (uid) {
+        const list = await getSessionsWithLatest(uid);
+        setSessions(list);
+      } else {
+        setSessions([]);
+      }
+    } catch (e) {
+      setSessions([]);
+    } finally {
+      setLoadingSessions(false);
+    }
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setIsDrawerOpen(false);
+  }, []);
+
+  const onMenuPress = useCallback(async () => {
+    await openDrawer();
+  }, [openDrawer]);
+
+  const onSelectSession = useCallback(
+    async (id: string) => {
+      await selectSession(id);
+      closeDrawer();
+    },
+    [selectSession, closeDrawer],
+  );
 
   const sendMessage = useCallback(async () => {
     const trimmed = message.trim();
@@ -93,7 +164,6 @@ export function useChatbot(): UseChatbotReturn {
       };
 
       const data = (await sendChatMessage(body)) as ChatResponse;
-      console.log('data', data);
       if (data?.answer) {
         const toMarkdownLinks = (text: string): string => {
           const urlRegex = /(https?:\/\/[^\s)]+)\b/g;
@@ -130,13 +200,34 @@ export function useChatbot(): UseChatbotReturn {
     }
   }, [message, messages.length, sessionId]);
 
+  const startNewChat = useCallback(() => {
+    // If already a fresh session (only initial AI message), no-op
+    if (messages.length <= 1) return;
+    setSessionId(generateUniqueId());
+    setMessages(createInitialMessages());
+    setMessage('');
+    setIsTyping(false);
+  }, [messages.length, createInitialMessages]);
+
+  const handleStartNewChat = useCallback(() => {
+    if (messages.length <= 1) return;
+    startNewChat();
+  }, [messages.length, startNewChat]);
+
   return {
     user,
     message,
     messages,
     isTyping,
-    resetChat,
+    sessions,
+    isDrawerOpen,
+    loadingSessions,
+    currentSessionId: sessionId,
+    closeDrawer,
+    onMenuPress,
     sendMessage,
+    onSelectSession,
+    handleStartNewChat,
     handleMessageChange,
   };
 }

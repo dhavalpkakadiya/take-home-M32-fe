@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Alert,
+  Keyboard,
   ScrollView,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
-  Keyboard,
 } from 'react-native';
 
 import {
@@ -13,14 +13,23 @@ import {
 } from 'react-native-safe-area-context';
 import { getAuth, signOut } from '@react-native-firebase/auth';
 
-import { Header } from '../../components';
-import { MessageData } from '../../declarations';
-import { colors, hp, icons, wp, strings, commonStyles } from '../../helper';
 import {
+  hp,
+  wp,
+  icons,
+  isIOS,
+  colors,
+  strings,
+  commonStyles,
+} from '../../helper';
+import {
+  Header,
   MessageItem,
   ChatInputField,
+  SessionsDrawer,
   TypingIndicator,
-} from '../../components/chatbot';
+} from '../../components';
+import { MessageData } from '../../declarations';
 import { useChatbot } from '../../hooks/chat/useChatbot';
 
 const ChatBot = () => {
@@ -29,7 +38,15 @@ const ChatBot = () => {
     message,
     messages,
     isTyping,
+    sessions,
+    isDrawerOpen,
+    loadingSessions,
+    currentSessionId,
+    closeDrawer,
+    onMenuPress,
     sendMessage,
+    onSelectSession,
+    handleStartNewChat,
     handleMessageChange,
   } = useChatbot();
 
@@ -37,7 +54,6 @@ const ChatBot = () => {
   const { bottom } = useSafeAreaInsets();
 
   const userName = user?.name?.charAt(0)?.toUpperCase() || '';
-  console.log('user', user);
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
@@ -84,15 +100,22 @@ const ChatBot = () => {
     ]);
   };
 
+  // Using onMenuPress and onSelectSession directly from the hook
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Header
         title={strings.chat_title}
-        onRightPress={onLogoutPress}
-        rightIcon={icons.logout}
+        onLeftPress={onMenuPress}
+        leftIcon={icons.menu}
+        rightIcon={icons.add}
+        onRightPress={handleStartNewChat}
       />
 
-      <KeyboardAvoidingView style={commonStyles.flex}>
+      <KeyboardAvoidingView
+        style={commonStyles.flex}
+        behavior={isIOS ? 'padding' : undefined}
+      >
         <ScrollView
           ref={scrollViewRef}
           style={styles.chatContainer}
@@ -116,6 +139,7 @@ const ChatBot = () => {
           onSend={handleSendMessage}
           placeholder={strings.chat_input_placeholder}
           onChangeText={handleMessageChange}
+          onFocus={scrollToBottom}
           containerStyle={{
             paddingBottom: keyboardHeight
               ? keyboardHeight + bottom
@@ -123,6 +147,17 @@ const ChatBot = () => {
           }}
         />
       </KeyboardAvoidingView>
+
+      <SessionsDrawer
+        open={isDrawerOpen}
+        sessions={sessions}
+        loading={loadingSessions}
+        userName={user?.name}
+        currentSessionId={currentSessionId}
+        onClose={closeDrawer}
+        onSelectSession={onSelectSession}
+        onPressLogout={onLogoutPress}
+      />
     </SafeAreaView>
   );
 };
@@ -139,9 +174,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(15),
     paddingTop: hp(16.24),
     paddingBottom: hp(16.24),
-  },
-  typingIndicator: {
-    opacity: 0.7,
   },
 });
 

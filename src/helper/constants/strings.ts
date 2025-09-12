@@ -30,6 +30,9 @@ export const strings = {
   typing_indicator: 'AI is typing...',
   chat_input_placeholder: 'Type your message...',
   chat_initial_ai_message: 'Hello, how can I assist you today?',
+  no_sessions_yet: 'No sessions yet',
+  hello: 'Hello',
+  user_fallback: 'User',
   ai_response_marketing:
     "I can help you develop effective marketing strategies for your business. Let's start by understanding your target audience and current marketing channels.",
   ai_response_cafe:
@@ -47,4 +50,6 @@ export const strings = {
   auth_invalid_email: 'That email address is invalid!',
   auth_signup_generic:
     'There is some issue while creating the account. Please try again later!',
+  // Misc
+  untitled: 'Untitled',
 };
