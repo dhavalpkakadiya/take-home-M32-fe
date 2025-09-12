@@ -1,4 +1,5 @@
 import { TextInputProps as RNTextInputProps, StyleProp } from 'react-native';
+import { MessageData } from './Chat';
 
 export interface MarginProps {
   allowHMargin?: boolean;
@@ -32,20 +33,10 @@ export interface HeaderProps {
   allowHMargin?: boolean;
 }
 
-export interface AvatarProps {
-  name?: string;
-  size?: number;
-  text?: string;
-  imageUri?: string;
-  style?: ViewStyle;
-  type?: 'ai' | 'user';
-  backgroundColor?: string;
-}
 
 export interface MessageBubbleProps {
-  message: string;
+  message: MessageData;
   maxWidth?: number;
-  type?: 'ai' | 'user';
   textStyle?: TextStyle;
   bubbleStyle?: ViewStyle;
 }
@@ -56,15 +47,13 @@ export interface ChatInputFieldProps {
   maxLength?: number;
   placeholder?: string;
   inputStyle?: TextStyle;
-  keyboardHeight?: number;
   containerStyle?: StyleProp<ViewStyle>;
   sendButtonStyle?: StyleProp<ViewStyle>;
   onChangeText: (text: string) => void;
 }
 
 export interface MessageItemProps {
-  name?: string;
-  message: string;
-  type?: 'ai' | 'user';
+  name: string;
+  message: MessageData;
   containerStyle?: ViewStyle;
 }

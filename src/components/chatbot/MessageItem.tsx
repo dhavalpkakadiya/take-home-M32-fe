@@ -1,30 +1,34 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
-import { Avatar } from './Avatar';
 import { MessageBubble } from './MessageBubble';
-import { wp, hp } from '../../helper';
+import { hp, fs, colors } from '../../helper';
 import { MessageItemProps } from '../../declarations';
 
-export const MessageItem = ({
-  message,
-  name,
-  type = 'ai',
-  containerStyle,
-}: MessageItemProps) => {
-  const isAI: boolean = type === 'ai';
+export const MessageItem = ({ message, containerStyle }: MessageItemProps) => {
+  const isAI: boolean = message.type === 'ai';
+  const timestamp = message.timestamp;
+
+  const formatTime = (time?: Date | string): string => {
+    if (!time) return '';
+    const date = new Date(time);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
 
   return (
     <View style={[styles.messageContainer, containerStyle]}>
       <View style={[styles.messageRow, isAI ? styles.aiRow : styles.userRow]}>
-        {isAI && <Avatar type="ai" style={{ marginRight: wp(11.25) }} />}
-
-        <MessageBubble message={message} type={type} />
-
-        {!isAI && (
-          <Avatar name={name} type="user" style={{ marginLeft: wp(11.25) }} />
-        )}
+        <MessageBubble message={message} />
       </View>
+      {timestamp && (
+        <Text style={[styles.timestamp, !isAI && [styles.userTimestamp]]}>
+          {formatTime(timestamp)}
+        </Text>
+      )}
     </View>
   );
 };
@@ -42,5 +46,15 @@ const styles = StyleSheet.create({
   },
   userRow: {
     justifyContent: 'flex-end',
+  },
+  timestamp: {
+    fontSize: fs(9),
+    alignSelf: 'flex-start',
+    marginTop: hp(3),
+  },
+
+  userTimestamp: {
+    color: colors.textPrimary,
+    alignSelf: 'flex-end',
   },
 });

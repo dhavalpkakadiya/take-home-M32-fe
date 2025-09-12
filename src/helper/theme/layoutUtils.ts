@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 // Screen dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -33,4 +33,6 @@ const fs = (size: number): number => {
   return size + (scaledSize - size) * factor;
 };
 
-export { hp, wp, fs, SCREEN_HEIGHT, SCREEN_WIDTH };
+const isIOS = Platform.OS === 'ios';
+
+export { hp, wp, fs, SCREEN_HEIGHT, SCREEN_WIDTH, isIOS };

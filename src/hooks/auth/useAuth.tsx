@@ -30,16 +30,16 @@ export const useAuth = () => {
         if (error?.code === 'auth/user-not-found') {
           return {
             ok: false,
-            message: 'No user account exists for the provided email address.',
+            message: strings.auth_user_not_found,
           };
         }
         if (error?.code === 'auth/invalid-credential') {
           return {
             ok: false,
-            message: 'The provided credentials are invalid.',
+            message: strings.auth_invalid_credential,
           };
         }
-        return { ok: false, message: 'Unable to sign in. Please try again.' };
+        return { ok: false, message: strings.auth_signin_generic };
       }
     },
     [],
@@ -48,28 +48,29 @@ export const useAuth = () => {
   const signUp = React.useCallback(
     async (user: SignUpParams): Promise<AuthResult> => {
       try {
-        await createUserWithEmailAndPassword(
+        const userData = await createUserWithEmailAndPassword(
           getAuth(),
           user.email,
           user.password,
         );
+        console.log('userData', userData)
+        console.log('userData.user.uid', userData.user.uid);
         await getAuth().signOut();
-        await createUser(user);
+        await createUser(userData.user.uid, user);
         return { ok: true };
       } catch (error: any) {
         if (error?.code === 'auth/email-already-in-use') {
           return {
             ok: false,
-            message: 'That email address is already in use!',
+            message: strings.auth_email_in_use,
           };
         }
         if (error?.code === 'auth/invalid-email') {
-          return { ok: false, message: 'That email address is invalid!' };
+          return { ok: false, message: strings.auth_invalid_email };
         }
         return {
           ok: false,
-          message:
-            'There is some issue while creating the account. Please try again later!',
+          message: strings.auth_signup_generic,
         };
       }
     },
@@ -89,7 +90,7 @@ export const useAuth = () => {
     onSubmit: async values => {
       const result = await signIn(values);
       if (!result.ok) {
-        Alert.alert('Login', result.message);
+        Alert.alert(strings.login, result.message);
       }
     },
   });
@@ -110,10 +111,10 @@ export const useAuth = () => {
     onSubmit: async values => {
       const result = await signUp(values);
       if (result.ok) {
-        Alert.alert('SignUp', 'Your account has been created successfully');
+        Alert.alert(strings.signup, strings.signup_success_message);
         navigation.navigate('Login');
       } else {
-        Alert.alert('SignUp', result.message);
+        Alert.alert(strings.signup, result.message);
       }
     },
   });

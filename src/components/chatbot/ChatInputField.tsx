@@ -56,11 +56,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
     paddingHorizontal: wp(15),
-    paddingTop: hp(12.18),
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'flex-end',
+    marginVertical: hp(12.18),
   },
   textInput: {
     flex: 1,
