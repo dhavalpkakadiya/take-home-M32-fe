@@ -1,20 +1,66 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const Button = () => {
+import { ButtonProps } from '../../declarations';
+import { colors, commonStyles, fs, hp, wp } from '../../helper';
+
+const Button = ({
+  type,
+  text,
+  container,
+  allowMargin,
+  allowHMargin,
+  allowVMargin,
+  onPress,
+}: ButtonProps) => {
+  const isPrimary = type !== 'secondary';
   return (
-    <View style={styles.container}>
-      <Text>Button</Text>
-    </View>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        isPrimary ? styles.primaryContainer : styles.secondaryContainer,
+        allowMargin && commonStyles.allowMargin,
+        allowHMargin && commonStyles.allowHMargin,
+        allowVMargin && commonStyles.allowVMargin,
+        container,
+      ]}
+      onPress={onPress}
+    >
+      <Text
+        style={[
+          styles.text,
+          isPrimary ? styles.primaryText : styles.secondaryText,
+        ]}
+      >
+        {text}
+      </Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2c3e50',
+    paddingVertical: hp(12),
+    paddingHorizontal: wp(12),
+    borderRadius: wp(12),
+  },
+  primaryContainer: {
+    backgroundColor: colors.primary,
+  },
+  secondaryContainer: {
+    backgroundColor: colors.secondary,
+  },
+  text: {
+    fontSize: fs(16),
+    fontWeight: '600',
+  },
+  primaryText: {
+    color: colors.secondary,
+  },
+  secondaryText: {
+    color: colors.primary,
   },
 });
 
